@@ -1,0 +1,9 @@
+/* Animated Counter Styles
+  Ensures numbers don't jump visually while changing values.
+*/
+.animated-counter {
+  display: inline-block;
+  /* tabular-nums ensures all digits have the same width, preventing horizontal jitter */
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}

@@ -1,0 +1,97 @@
+/* Container height defines the total scroll distance for the animation */
+.hero-container {
+  height: 900vh;
+  position: relative;
+}
+
+/* Keeps the viewport content static while scrolling through the container */
+.hero-fixed-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  isolation: auto;
+}
+
+.hero-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Typography and UI Overlays */
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* Allows scrolling through the text */
+}
+
+.hero-main-title {
+  color: #fff;
+  font-size: 10vw;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-align: center;
+  filter: drop-shadow(0px 0px 20px rgba(0,0,0,0.6));
+  line-height: 0.9;
+  position: relative;
+  z-index: 10;
+}
+
+.title-main {
+  display: block;
+  transform-origin: 52.2% center;
+  opacity: 0;
+  font-family: 'Libre Baskerville', serif;
+}
+
+.title-sub {
+  font-family: 'Quicksand', sans-serif;
+  text-transform: lowercase;
+  font-weight: 300;
+  font-style: italic;
+  font-size: 0.4em;
+  display: block;
+  margin-top: 10px;
+  letter-spacing: 2px;
+  opacity: 0;
+}
+
+/* Bottom Scroll Hint */
+.scroll-indicator-container {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.scroll-text {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: #fff;
+  font-weight: bold;
+  font-family: 'Quicksand', sans-serif;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 3rem;
+  background: linear-gradient(to bottom, #fff, transparent);
+}

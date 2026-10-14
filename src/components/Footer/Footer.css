@@ -1,0 +1,47 @@
+/* Main Footer Container */
+.main-footer {
+  padding: 4rem 2rem; /* Increased top padding for better breathing room */
+  text-align: center;
+  background-color: #fff;
+  position: relative;
+  overflow: hidden;
+  z-index: 9;
+}
+
+/* Minimalist separator */
+.footer-line {
+  width: 80px;
+  height: 1px;
+  background: #000;
+  margin: 0 auto 2rem;
+  opacity: 0.1; /* Subtle divider */
+}
+
+/* Author Branding */
+.footer-name {
+  font-family: "Libre Baskerville", serif;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #000;
+  margin-bottom: 0.5rem;
+  display: block;
+  /* Smooth transition for hover effects */
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.footer-name:hover {
+  cursor: pointer;
+  font-style: italic;
+  letter-spacing: 3px; /* Slight expansion for a premium feel */
+}
+
+/* Copyright and Credits */
+.footer-copy {
+  font-family: "Quicksand", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #999;
+  letter-spacing: 1px;
+  margin-top: 1.5rem;
+}

@@ -1,0 +1,119 @@
+.custom-cursor {
+position: fixed;
+  top: 0;
+  left: 0;
+  /* Reducimos el tamaño base para que sea un punto sutil, como en Muizz */
+  width: 6px; 
+  height: 6px;
+ 
+  border-radius: 50%;
+  pointer-events: none; /* Fundamental: permite hacer click a través */
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%); /* Centrado perfecto */
+  transition: 
+    width 0.4s cubic-bezier(0.23, 1, 0.32, 1), 
+    height 0.4s cubic-bezier(0.23, 1, 0.32, 1), 
+    background-color 0.3s ease;
+ }
+
+.custom-cursor::after {
+  content: "";
+  position: absolute;
+  /* width: 4px;
+  height: 4px; */
+  background-color: transparent; /* Punto blanco central */
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* El contenedor del texto circular */
+.cursor-label {
+  position: absolute;
+  width: 70px; /* Tamaño del círculo cuando se activa */
+  height: 70px;
+  padding: 5px;
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.4s, transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  /* Animación de rotación infinita */
+  animation: rotateText 8s linear infinite;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  box-shadow: rgba(4, 66, 161, 0.17) 0px -23px 25px 0px inset, rgba(4, 66, 161, 0.15) 0px -36px 30px 0px inset, rgba(4, 66, 161, 0.1) 0px -79px 40px 0px inset, rgba(4, 66, 161, 0.06) 0px 2px 1px, rgba(4, 66, 161, 0.09) 0px 4px 2px, rgba(4, 66, 161, 0.09) 0px 8px 4px, rgba(4, 66, 161, 0.09) 0px 16px 8px, rgba(4, 66, 161, 0.09) 0px 32px 16px;
+}
+
+.custom-cursor.active .cursor-label {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Estilos del texto dentro del SVG */
+.cursor-label svg {
+  width: 100%;
+  height: 100%;
+}
+
+.cursor-label text {
+  fill: #fff; /* Color del texto */
+  font-family: "Quicksand", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+}
+
+/* El punto central sutil */
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  background-color: transparent;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+/* .custom-cursor.active .cursor-dot {
+  transform: scale(0.5); 
+} */
+
+/* Animación de rotación */
+@keyframes rotateText {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* El estado de expansión total */
+.custom-cursor.expanding {
+  width: 350vmax; /* Un poco más por seguridad en monitores ultrawide */
+  height: 350vmax;
+  background-color: #0442a1; 
+  mix-blend-mode: normal; 
+  z-index: 99999; /* El máximo absoluto */
+  
+  /* Animación de entrada: Expande rápido con fuerza */
+  transition: 
+    width 0.8s cubic-bezier(0.85, 0, 0.15, 1), 
+    height 0.8s cubic-bezier(0.85, 0, 0.15, 1);
+}
+
+/* Cuando se achica al terminar la transición */
+.custom-cursor:not(.expanding) {
+  transition: 
+    width 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
+    height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.1s ease-out; /* El follow del mouse sigue siendo rápido */
+}
+
+.custom-cursor.expanding .cursor-label {
+  opacity: 0; /* El texto desaparece durante la explosión */
+  transform: scale(1.5); /* Opcional: que crezca un poquito mientras se apaga */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.custom-cursor.expanding .cursor-dot {
+  opacity: 0; /* También apagamos el punto central */
+  transition: opacity 0.2s ease;
+}

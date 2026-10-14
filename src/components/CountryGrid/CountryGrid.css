@@ -1,0 +1,209 @@
+/* Reveal Section: Compares negative margin with min-height to balance layout */
+.grid-reveal-section {
+  position: relative;
+  z-index: 10;
+  background-color: #fff;
+  /* min-height matches margin-top to ensure proper scroll calculation and footer position */
+  min-height: 155vh; 
+  width: 100vw;
+  box-sizing: border-box;
+  padding: 6rem 2rem 0;
+  /* Overlaps with Hero animation frames */
+  margin-top: -155vh;
+  will-change: transform, opacity;
+  /* Soft feathered edge at the top for smooth transition */
+  mask-image: linear-gradient(to bottom, transparent 0%, black 150px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 150px);
+}
+
+.grid-content-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Bento Grid: Optimized with contain:paint for performance during heavy scrolls */
+.bento-grid {
+  display: grid;
+  grid-auto-flow: dense;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-auto-rows: 240px;
+  gap: 1.5rem;
+  padding: 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  contain: paint;
+}
+
+/* Card Entrance: Managed via CSS keyframes for immediate render performance */
+.bento-item {
+  background: #fbfbfb;
+  border-radius: 1.8rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1), background-color 0.4s ease, box-shadow 0.5s ease;
+  animation: cardEntrance 0.7s cubic-bezier(0.23, 1, 0.32, 1) both;
+  will-change: transform, opacity;
+}
+
+.bento-item:hover {
+  transform: translateY(-10px) scale(1.02);
+  background-color: #ffffff;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+  border-color: rgba(37, 99, 235, 0.2);
+}
+
+.bento-item.large {
+  grid-column: span 2;
+  grid-row: span 2;
+  padding: 2.5rem;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.bento-flag-container {
+  width: 45px;
+  height: 45px;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.bento-flag-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bento-country-name {
+  font-family: "Libre Baskerville", serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.bento-country-sub {
+  font-family: "Quicksand", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #555;
+}
+
+/* UI States: Skeletons and Empty Search */
+.bento-item.skeleton {
+  background: #eee;
+  pointer-events: none;
+}
+
+.skeleton-flag {
+  width: 45px;
+  height: 45px;
+  background: #ddd;
+  border-radius: 1rem;
+}
+
+.scroll-observer-sensor {
+  height: 20px;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+/* End Message with Magnifying Glass logic */
+.end-message {
+  margin-top: 6rem;
+  margin-bottom: 6rem;
+  font-family: "Quicksand", sans-serif;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  perspective: 1000px;
+  text-align: center;
+}
+
+.char {
+  display: inline-block !important;
+  font-size: 1rem;
+  letter-spacing: 4px;
+  color: #000;
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), color 0.3s ease;
+  cursor: default;
+  position: relative;
+}
+
+.end-message.is-epic { letter-spacing: 8px; }
+.end-message.is-filter { color: #999; font-size: 0.8rem; text-transform: uppercase; width: 100%; }
+
+.no-results-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  padding: 4rem 0;
+  font-family: "Quicksand", sans-serif;
+}
+
+.status-discovering {
+  opacity: 0.6;
+  font-family: "Quicksand";
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 4rem 0;
+}
+
+@keyframes cardEntrance {
+  from { opacity: 0; transform: translateY(60px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bento-details-btn{
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  border: none;
+  padding: clamp(0.5rem, 0.423rem + 0.31vw, 0.8rem)
+    clamp(0.75rem, 0.615rem + 0.62vw, 1.5rem);
+  border-radius: 50px;
+  font-family: "Quicksand", sans-serif;
+  font-size: clamp(0.5rem, 0.454rem + 0.21vw, 0.7rem);
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  z-index: 60;
+  transition: all 0.3s ease;
+}
+
+.bento-details-btn:hover {
+  background: var(--primary-color);
+  transform: scale(1.05);
+}
+
+.ai-loading-status-box {
+  animation: pulse 1.8s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.99);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.5;
+    transform: scale(0.99);
+  }
+}

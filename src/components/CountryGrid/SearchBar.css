@@ -1,0 +1,137 @@
+/* Sticky Container */
+.sticky-search-container {
+  margin-bottom: 5rem;
+  position: sticky;
+  top: 2rem;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* Search Input Section */
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1.5rem 3rem;
+  border-radius: 100px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px); /* Modern frosted glass effect */
+  outline: none;
+  font-family: "Quicksand", sans-serif;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(4, 66, 161, 0.05);
+  transition: all 0.3s ease;
+}
+
+.search-input.has-match {
+  text-align: left;
+  padding-left: 4.5rem;
+}
+
+/* Flag Preview Logic */
+.match-flag-preview {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 35px;
+  height: 25px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 102;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.match-flag-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 101;
+}
+
+/* Toolbar and Controls */
+.filter-toolbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.5rem;
+  min-height: 40px;
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+}
+
+.results-counter {
+  position: absolute;
+  left: 0;
+  font-family: "Quicksand", sans-serif;
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.results-counter.no-results {
+  color: var(--secondary-color);
+}
+
+.select-filters-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.filter-select {
+  padding: 0.6rem 1.2rem;
+  border-radius: 50px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.5);
+  font-family: "Quicksand";
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-select:hover {
+  background: white;
+}
+
+.reset-filters-btn {
+  position: absolute;
+  right: 0;
+  background: none;
+  border: none;
+  color: var(--secondary-color);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-50%) scale(0.5); }
+  to { opacity: 1; transform: translateY(-50%) scale(1); }
+}

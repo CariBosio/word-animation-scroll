@@ -1,0 +1,50 @@
+.lang-toggle-wrapper {
+  position: fixed;
+  top: 28px;
+  /* ACÁ corregir ubicación del toggle */
+  right: 136px; 
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(18, 18, 18, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 30px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lang-toggle-wrapper:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: color 0.25s ease;
+}
+
+.lang-btn:hover {
+  color: #ffffff;
+}
+
+.lang-btn.active {
+  color: #dfba73; /* Tono dorado acorde al estilo editorial */
+  font-weight: 700;
+}
+
+.lang-separator {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.7rem;
+  user-select: none;
+}

@@ -16,6 +16,12 @@
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* 🎯 Cuando el detalle del país está abierto, se desplaza a la izquierda del botón de Cerrar */
+body:has(.country-detail-overlay) .lang-toggle-wrapper {
+  top: 36px;
+  right: 150px; /* Deja espacio amplio para que no toque a '× CERRAR' */
+}
+
 .lang-toggle-wrapper:hover {
   border-color: rgba(255, 255, 255, 0.28);
   background: rgba(255, 255, 255, 0.05);

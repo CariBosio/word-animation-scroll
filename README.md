@@ -45,6 +45,7 @@
 
 ## 📁 Estructura del Proyecto
 
+```plaintext
 word-animation-scroll/
 ├── .vscode/                  # Configuración y tareas del editor (tasks.json)
 ├── api/
@@ -81,6 +82,7 @@ word-animation-scroll/
 ├── server.js                 # Servidor Express, endpoints de Neon y Gemini API
 ├── vercel.json               # Reglas de routing y rewrites para Vercel Functions
 └── vite.config.js            # Configuración de Vite con proxy para desarrollo local
+```
 
 ---
 
@@ -92,28 +94,35 @@ word-animation-scroll/
 - Clave de API de Google AI Studio.
 
 ### 1. Clonar el repositorio
+```bash
 git clone [https://github.com/CariBosio/word-animation-scroll.git](https://github.com/CariBosio/word-animation-scroll.git)
 cd word-animation-scroll
+```
 
 ### 2. Instalar dependencias
+```bash
 npm install
+```
 
 ### 3. Configurar variables de entorno
 Crea un archivo `.env` en la raíz del proyecto:
-
+```env
 GOOGLE_GENAI_API_KEY=tu_gemini_api_key
 DATABASE_URL=postgres://usuario:password@endpoint.neon.tech/neondb?sslmode=require
 VITE_NEON_URL=postgres://usuario:password@endpoint.neon.tech/neondb?sslmode=require
 PORT=3001
+```
 
 ### 4. Iniciar en desarrollo
 En dos terminales independientes:
 
+```bash
 # Terminal 1 - Backend (Express + Neon + Gemini)
 node server.js
 
 # Terminal 2 - Frontend (Vite + React + GSAP + Lenis)
 npm run dev
+```
 
 Visita http://localhost:5173 en tu navegador.
 

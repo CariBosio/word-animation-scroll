@@ -18,20 +18,18 @@ app.use(express.json());
 const essenceCache = {};
 app.get("/api/country-essence/:name", async (req, res) => {
   const countryName = req.params.name;
-  const lang = req.query.lang || "en"; // 👈 1. Leemos el parámetro de idioma del frontend
-
-  // 👈 2. La clave de caché debe incluir el idioma ("Afghanistan_es", "Afghanistan_en")
+  const lang = req.query.lang || "en";
   const cacheKey = `${countryName}_${lang}`;
 
-  // 1. Check if data exists in cache to save API quota
   if (essenceCache[cacheKey]) {
     return res.json({ essence: essenceCache[cacheKey] });
   }
 
   const apiKey = process.env.GOOGLE_GENAI_API_KEY;
-  const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-  // 👈 3. Forzar explícitamente el idioma en el prompt
+  // 🎯 1. Endpoint estable en v1beta
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
   const targetLanguage = lang === "es" ? "Spanish (Español)" : "English";
   const promptText = `Write a poetic, atmospheric, luxury travel magazine paragraph capturing the soul and essence of ${countryName}.
 Write it strictly in ${targetLanguage}.
@@ -44,11 +42,7 @@ Maximum 45 words. Do not use quotes, bold text, or markdown, just the plain text
       body: JSON.stringify({
         contents: [
           {
-            parts: [
-              {
-                text: promptText,
-              },
-            ],
+            parts: [{ text: promptText }],
           },
         ],
       }),
@@ -56,26 +50,21 @@ Maximum 45 words. Do not use quotes, bold text, or markdown, just the plain text
 
     const data = await response.json();
 
-    if (data.candidates && data.candidates[0].content.parts[0].text) {
-      const aiText = data.candidates[0].content.parts[0].text.trim();
-
-      // 2. Store response in cache con su clave compuesta
-      essenceCache[cacheKey] = aiText;
-
-      res.json({ essence: aiText });
-    } else if (data.error && data.error.code === 429) {
-      // 3. Graceful handling of API rate limit errors en el idioma adecuado
-      res.status(429).json({
-        essence:
-          lang === "es"
-            ? `El oráculo está descansando un momento. Explora la belleza de ${countryName} y vuelve a intentarlo en unos segundos.`
-            : `The oracle is resting for a moment. Explore the beauty of ${countryName} and try again in a few seconds.`,
-      });
-    } else {
-      throw new Error("Unexpected structure");
+    // 🎯 2. Si Google devolvió un error, lo imprimimos claramente en Vercel
+    if (!response.ok) {
+      console.error("❌ Error devuelto por Google:", JSON.stringify(data));
+      throw new Error(data.error?.message || "Google API Error");
     }
+
+    if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+      const aiText = data.candidates[0].content.parts[0].text.trim();
+      essenceCache[cacheKey] = aiText;
+      return res.json({ essence: aiText });
+    }
+
+    throw new Error("Unexpected structure: " + JSON.stringify(data));
   } catch (error) {
-    console.error("💥 Gemini route failure:", error);
+    console.error("💥 Gemini route failure:", error.message);
     res.json({
       essence:
         lang === "es"
@@ -103,7 +92,7 @@ app.post("/api/semantic-search", async (req, res) => {
   }
 
   const apiKey = process.env.GOOGLE_GENAI_API_KEY;
-  const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   try {
     const dbCountries = await sql`SELECT id_code, name, continent FROM countries`;

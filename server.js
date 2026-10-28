@@ -28,7 +28,7 @@ app.get("/api/country-essence/:name", async (req, res) => {
   const apiKey = process.env.GOOGLE_GENAI_API_KEY;
 
   // 🎯 1. Endpoint estable en v1beta
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`;
 
   const targetLanguage = lang === "es" ? "Spanish (Español)" : "English";
   const promptText = `Write a poetic, atmospheric, luxury travel magazine paragraph capturing the soul and essence of ${countryName}.
@@ -92,7 +92,7 @@ app.post("/api/semantic-search", async (req, res) => {
   }
 
   const apiKey = process.env.GOOGLE_GENAI_API_KEY;
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`;
 
   try {
     const dbCountries = await sql`SELECT id_code, name, continent FROM countries`;

@@ -356,7 +356,7 @@ function App() {
         window.dispatchEvent(new CustomEvent("endCountryTransition"));
         setIsTransitioning(false);
       }, 150);
-    }, 800);
+    }, 500);
   };
 
   const handleNeighborSelect = (borderCode) => {

@@ -27,51 +27,73 @@ app.get("/api/country-essence/:name", async (req, res) => {
 
   const apiKey = process.env.GOOGLE_GENAI_API_KEY;
 
-  // 🎯 1. Endpoint estable en v1beta
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`;
-
-  const targetLanguage = lang === "es" ? "Spanish (Español)" : "English";
-  const promptText = `Write a poetic, atmospheric, luxury travel magazine paragraph capturing the soul and essence of ${countryName}.
-Write it strictly in ${targetLanguage}.
-Maximum 45 words. Do not use quotes, bold text, or markdown, just the plain text paragraph.`;
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: promptText }],
-          },
-        ],
-      }),
-    });
-
-    const data = await response.json();
-
-    // 🎯 2. Si Google devolvió un error, lo imprimimos claramente en Vercel
-    if (!response.ok) {
-      console.error("❌ Error devuelto por Google:", JSON.stringify(data));
-      throw new Error(data.error?.message || "Google API Error");
-    }
-
-    if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
-      const aiText = data.candidates[0].content.parts[0].text.trim();
-      essenceCache[cacheKey] = aiText;
-      return res.json({ essence: aiText });
-    }
-
-    throw new Error("Unexpected structure: " + JSON.stringify(data));
-  } catch (error) {
-    console.error("💥 Gemini route failure:", error.message);
-    res.json({
+  if (!apiKey) {
+    console.error("❌ GOOGLE_GENAI_API_KEY no detectada en el entorno");
+    return res.json({
       essence:
         lang === "es"
           ? `Descubre la magia y el encanto inigualable de ${countryName}.`
           : `Experience the unique spirit of ${countryName}.`,
     });
   }
+
+  const targetLanguage = lang === "es" ? "Spanish (Español)" : "English";
+  const promptText = `Write a poetic, atmospheric, luxury travel magazine paragraph capturing the soul and essence of ${countryName}.
+Write it strictly in ${targetLanguage}.
+Maximum 45 words. Do not use quotes, bold text, or markdown, just the plain text paragraph.`;
+
+  // 🎯 Lista de modelos: Vercel tomará el 1° y tu entorno local tomará el disponible
+  const modelsToTry = [
+    "gemini-3.1-flash-lite",
+    "gemini-3.8-flash",
+    "gemini-2.0-flash"
+  ];
+
+  for (const modelName of modelsToTry) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: promptText }] }],
+        }),
+      });
+
+      if (response.status === 429 || response.status === 503) {
+        return res.status(200).json({
+          essence:
+            lang === "es"
+              ? `El oráculo está descansando un momento. Explora la belleza de ${countryName} y vuelve a intentarlo en unos instantes.`
+              : `The oracle is resting for a moment. Explore ${countryName} and try again shortly.`,
+        });
+      }
+
+      if (!response.ok) {
+        // Si este modelo particular da 404 en esta región, pasa al siguiente de la lista
+        continue;
+      }
+
+      const data = await response.json();
+
+      if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+        const aiText = data.candidates[0].content.parts[0].text.trim();
+        essenceCache[cacheKey] = aiText;
+        return res.json({ essence: aiText });
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  // Fallback si Google estuviese completamente caído
+  res.json({
+    essence:
+      lang === "es"
+        ? `Descubre la magia y el encanto inigualable de ${countryName}.`
+        : `Experience the unique spirit of ${countryName}.`,
+  });
 });
 
 // --- 🧠 ROUTE: SEMANTIC SEARCH WITH MEMORY CACHE (Anti-429 & Ultra Fast) ---
@@ -82,25 +104,29 @@ app.post("/api/semantic-search", async (req, res) => {
 
   if (!query) return res.json({ matches: [] });
 
-  // Normalizamos la frase (en minúsculas y sin espacios raros) para usarla como clave de caché
+  // Normalizamos la frase para la clave de caché
   const cacheKey = query.toLowerCase().trim();
 
-  // 🚀 SI YA SE BUSCÓ ANTES: Respondemos al instante (0ms) sin tocar la API de Google
+  // 🚀 SI YA SE BUSCÓ ANTES: 0ms sin tocar la API de Google
   if (semanticCache[cacheKey]) {
     console.log(`⚡ [CACHED MATCH] Instant response for: "${query}"`);
     return res.json({ matches: semanticCache[cacheKey] });
   }
 
   const apiKey = process.env.GOOGLE_GENAI_API_KEY;
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`;
+
+  if (!apiKey) {
+    console.error("❌ GOOGLE_GENAI_API_KEY no detectada");
+    return res.json({ matches: [] });
+  }
 
   try {
     const dbCountries = await sql`SELECT id_code, name, continent FROM countries`;
 
-    const simplifiedCountries = dbCountries.map(c => ({
+    const simplifiedCountries = dbCountries.map((c) => ({
       id_code: c.id_code,
       name: c.name,
-      continent: c.continent
+      continent: c.continent,
     }));
 
     const prompt = `
@@ -111,51 +137,74 @@ app.post("/api/semantic-search", async (req, res) => {
       No markdown, no text explanations.
     `;
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
-    });
+    // 🎯 Lista de modelos: Vercel tomará el 1° y en local tomará el disponible
+    const modelsToTry = [
+      "gemini-3.1-flash-lite",
+      "gemini-3.8-flash",
+      "gemini-2.0-flash"
+    ];
 
-    // 🛡️ CONTROL DE CUOTA EXCEDIDA (429): Fallback elegante
-  // 🛡️ ESCUDO PROTECTOR PARA LA CAPA GRATUITA (429 y 503)
-    if (response.status === 429 || response.status === 503) {
-      console.warn(`⚠️ Gemini API ocupada (Status: ${response.status}). Enviando señal de reset.`);
-      
-      // Enviamos el código 200 pero avisando que el servicio está caído momentáneamente
-      return res.json({ 
-        matches: [], 
-        isAiUnavailable: true 
-      });
+    let aiText = null;
+
+    for (const modelName of modelsToTry) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+          }),
+        });
+
+        // 🛡️ ESCUDO PARA CAPA GRATUITA (429 y 503)
+        if (response.status === 429 || response.status === 503) {
+          console.warn(`⚠️ Gemini API ocupada (Status: ${response.status}).`);
+          return res.json({
+            matches: [],
+            isAiUnavailable: true,
+          });
+        }
+
+        if (!response.ok) {
+          // Si el modelo da 404 regional, intenta con el siguiente de la lista
+          continue;
+        }
+
+        const data = await response.json();
+        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+          aiText = data.candidates[0].content.parts[0].text.trim();
+          break; // Match exitoso
+        }
+      } catch {
+        continue;
+      }
     }
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`❌ Gemini API Error (${response.status}):`, errorText);
+    if (!aiText) {
       return res.json({ matches: [] });
     }
 
-    const data = await response.json();
-    let aiText = data.candidates[0].content.parts[0].text.trim();
-    
+    // Limpieza de formato JSON seguro
     const jsonMatch = aiText.match(/\[[\s\S]*?\]/);
     if (jsonMatch) {
       aiText = jsonMatch[0];
     }
-    
+
     const matchedCodes = JSON.parse(aiText);
-    const cleanCodes = Array.isArray(matchedCodes) ? matchedCodes.map(code => code.toUpperCase()) : [];
-    
-    // 🎯 GUARDAMOS EN CACHÉ: La próxima vez esta misma frase vuela
+    const cleanCodes = Array.isArray(matchedCodes)
+      ? matchedCodes.map((code) => code.toUpperCase())
+      : [];
+
+    // Guardado en caché
     semanticCache[cacheKey] = cleanCodes;
 
     console.log(`🎯 AI Match Success for "${query}":`, cleanCodes);
-    res.json({ matches: cleanCodes });
+    return res.json({ matches: cleanCodes });
   } catch (error) {
     console.error("💥 Semantic Search Failure:", error.message);
-    res.json({ matches: [] });
+    return res.json({ matches: [] });
   }
 });
 

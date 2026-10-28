@@ -4,7 +4,7 @@
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-Bundler-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![GSAP](https://img.shields.io/badge/GSAP-Animations-88CE02?style=for-the-badge&logo=greensock&logoColor=white)](https://greensock.com/)
-[![Google Gemini](https://img.shields.io/badge/Gemini_API-2.5_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
+[![Google Gemini](https://img.shields.io/badge/Gemini_API-Generative_AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
 [![Neon Database](https://img.shields.io/badge/Neon-PostgreSQL-00E599?style=for-the-badge&logo=postgresql&logoColor=black)](https://neon.tech/)
 
 > Una experiencia web interactiva inspirada en el diseño editorial de alta gama. Combina animaciones fluidas basadas en scroll, búsqueda semántica potenciada por Inteligencia Artificial y micro-narrativas de viaje generadas en tiempo real.
@@ -16,10 +16,10 @@
 ## ✨ Características Principales
 
 - **Experiencia Inmersiva & Scrollytelling**: Integración de **Lenis Smooth Scroll** con **GSAP (ScrollTrigger & ScrollTo)** para transiciones de frames de alta fidelidad, efectos parallax y cursores personalizados.
-- **Búsqueda Semántica con IA (Gemini 2.5 Flash)**: Capacidad de interpretar intenciones de viaje y vibra (ej.: *"playas paradisíacas"*, *"auroras boreales y frío"*) mapeando conceptos a códigos de países ISO en tiempo real.
-- **Generación Editorial "La Esencia"**: Micro-reseñas poéticas generadas dinámicamente para cada país mediante LLM, optimizadas con un sistema de caché en memoria por idioma para prevenir rate limits (429/503).
+- **Búsqueda Semántica con IA (Google Gemini)**: Capacidad de interpretar intenciones de viaje y vibra (ej.: *"playas paradisíacas"*, *"auroras boreales y frío"*) mapeando conceptos a códigos de países ISO en tiempo real.
+- **Generación Editorial "La Esencia"**: Micro-reseñas poéticas generadas dinámicamente para cada país mediante LLM, optimizadas con un sistema de caché en memoria por idioma para mitigar límites de cuota (429/503).
 - **Internacionalización Completa (i18n)**: Soporte bilingüe dinámico (**Español / Inglés**) con traducción de interfaz, nombres oficiales de países vía estándar ISO y formateo regional de cifras (`Intl.NumberFormat`).
-- **Cartografía Interactiva**: Visualización geográfica detallada de cada país con **Leaflet / React Leaflet** y marcadores SVG vectoriales.
+- **Cartografía Interactiva**: Visualización geográfica detallada de cada país con **Leaflet / React Leaflet** y marcadores vectoriales.
 - **Base de Datos Serverless en la Nube**: Persistencia y consulta optimizada de más de 240 países y territorios en **Neon PostgreSQL** a través del driver serverless `@neondatabase/serverless`.
 
 ---
@@ -38,8 +38,8 @@
 - **Runtime**: Node.js con Express
 - **Serverless**: Vercel Serverless Functions (`/api` rewrite routing)
 - **Base de Datos**: PostgreSQL Serverless en Neon
-- **IA Generativa**: Google Gemini API (`gemini-2.5-flash`)
-- **Resiliencia & Caché**: Memoria volátil indexada (`country_lang` y `query_hash`) con fallback graceful ante saturación de cuota.
+- **IA Generativa**: Google Gemini API (`generativelanguage.googleapis.com`)
+- **Resiliencia & Caché**: Memoria volátil indexada (`country_lang` y `query_hash`) con fallback graceful ante picos de demanda.
 
 ---
 
@@ -90,8 +90,8 @@ word-animation-scroll/
 
 ### Prerrequisitos
 - Node.js (v18+)
-- Cuenta y proyecto en Neon con la base de datos de países creada.
-- Clave de API de Google AI Studio.
+- Cuenta y base de datos de países creada en [Neon](https://neon.tech/).
+- Clave de API de [Google AI Studio](https://aistudio.google.com/).
 
 ### 1. Clonar el repositorio
 ```bash
@@ -124,7 +124,7 @@ node server.js
 npm run dev
 ```
 
-Visita http://localhost:5173 en tu navegador.
+Visita `http://localhost:5173` en tu navegador.
 
 ---
 
